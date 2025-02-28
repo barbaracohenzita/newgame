@@ -1,4 +1,3 @@
-/* Center the canvas and set a dark background for a minimalist look */
 body {
   margin: 0;
   background-color: #222;
@@ -13,3 +12,4 @@ canvas {
   border: 2px solid #fff;
   cursor: crosshair;
 }
+
