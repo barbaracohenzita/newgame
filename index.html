@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Web Delivery Game</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #222;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      background: #333;
+      border: 2px solid #fff;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="600" height="400"></canvas>
+  <script>
+    // Get canvas and context
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Game variables
+    let score = 0;
+
+    // Player object
+    const player = {
+      x: canvas.width / 2,
+      y: canvas.height - 50,
+      width: 30,
+      height: 30,
+      speed: 4,
+      dx: 0,
+      dy: 0,
+      color: '#0f0'
+    };
+
+    // Destination object
+    const destination = {
+      x: Math.random() * (canvas.width - 30),
+      y: Math.random() * (canvas.height - 30),
+      width: 30,
+      height: 30,
+      color: '#f00'
+    };
+
+    // Handle key down events
+    function keyDown(e) {
+      if (e.key === 'ArrowRight' || e.key === 'Right') {
+        player.dx = player.speed;
+      } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        player.dx = -player.speed;
+      } else if (e.key === 'ArrowUp' || e.key === 'Up') {
+        player.dy = -player.speed;
+      } else if (e.key === 'ArrowDown' || e.key === 'Down') {
+        player.dy = player.speed;
+      }
+    }
+
+    // Handle key up events
+    function keyUp(e) {
+      if (
+        e.key === 'ArrowRight' || e.key === 'Right' ||
+        e.key === 'ArrowLeft' || e.key === 'Left'
+      ) {
+        player.dx = 0;
+      }
+      if (
+        e.key === 'ArrowUp' || e.key === 'Up' ||
+        e.key === 'ArrowDown' || e.key === 'Down'
+      ) {
+        player.dy = 0;
+      }
+    }
+
+    // Listen for keyboard events
+    document.addEventListener('keydown', keyDown);
+    document.addEventListener('keyup', keyUp);
+
+    // Update game objects
+    function update() {
+      // Update player's position
+      player.x += player.dx;
+      player.y += player.dy;
+
+      // Boundary checking for player
+      if (player.x < 0) player.x = 0;
+      if (player.y < 0) player.y = 0;
+      if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+      if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+      // Check collision with destination
+      if (
+        player.x < destination.x + destination.width &&
+        player.x + player.width > destination.x &&
+        player.y < destination.y + destination.height &&
+        player.y + player.height > destination.y
+      ) {
+        score++;
+        // Reposition destination randomly
+        destination.x = Math.random() * (canvas.width - destination.width);
+        destination.y = Math.random() * (canvas.height - destination.height);
+      }
+    }
+
+    // Draw game objects
+    function draw() {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw player
+      ctx.fillStyle = player.color;
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      // Draw destination
+      ctx.fillStyle = destination.color;
+      ctx.fillRect(destination.x, destination.y, destination.width, destination.height);
+
+      // Draw score
+      ctx.fillStyle = '#fff';
+      ctx.font = '20px Arial';
+      ctx.fillText('Score: ' + score, 10, 30);
+    }
+
+    // Main game loop
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Start the game loop
+    gameLoop();
+  </script>
+</body>
+</html>
